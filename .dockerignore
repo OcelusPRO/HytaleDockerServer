@@ -1,0 +1,12 @@
+# Git files
+.git
+.gitignore
+
+#idea
+.idea
+
+# Docker files (The Dockerfile itself isn't needed inside the image)
+Dockerfile
+.dockerignore
+
+tests
