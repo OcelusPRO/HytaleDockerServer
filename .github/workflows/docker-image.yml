@@ -38,6 +38,14 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+      - name: Update Docker Hub description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: ${{ secrets.DOCKER_USERNAME }}/hytale-docker-server
+          short-description: "Hytale Docker Server - High performance containerized Hytale server"
+          readme-filepath: ./README.md
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v3
