@@ -1,0 +1,14 @@
+services:
+  hytale:
+    image: ocelus/hytale-docker-server:latest
+    container_name: hytale
+    ports:
+      - "5520:5520/udp"
+    stdin_open: true
+    tty: true
+    volumes:
+      - hytale-data:/game
+    restart: unless-stopped
+
+volumes:
+  hytale-data:
