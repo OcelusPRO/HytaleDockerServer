@@ -6,8 +6,8 @@ export DOWNLOAD_CREDENTIALS_FILE_NAME=".hytale-downloader-credentials.json"
 export SERVER_PATH="${SERVER_PATH:-/game}"
 mkdir -p "$SERVER_PATH"
 
-export XMX="${XMX:-2048M}"
-export XMS="${XMS:-128M}"
+export XMX="${XMX:-4096M}"
+export XMS="${XMS:-2048M}"
 
 if [ -t 0 ]; then
   DTERM_JLINE_DEFAULT="true"

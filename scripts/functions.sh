@@ -23,7 +23,7 @@ get_json_val() {
 }
 
 authenticate_hytale() {
-    echo "[HytaleDockerServer-Auth] Initialisation de l'authentification Device Flow..."
+    echo "[HytaleDockerServer-Auth] Device Flow authentication initialization..."
     auth_req=$(curl -s -X POST "https://oauth.accounts.hytale.com/oauth2/device/auth" -d "client_id=hytale-server" -d "scope=openid offline auth:server")
 
     device_code=$(get_json_val "$auth_req" "device_code")
@@ -33,12 +33,12 @@ authenticate_hytale() {
 
     # Étape 2 : Instructions utilisateur
     echo "----------------------------------------------------------------------"
-    echo " ACTION REQUISE : Veuillez autoriser ce serveur Hytale "
+    echo " ACTION REQUIRED: Please authorize this Hytale server "
     echo " URL  : $url"
     echo "----------------------------------------------------------------------"
 
     # Étape 3 : Polling (Attente de l'autorisation)
-    echo "[HytaleDockerServer-Auth] En attente d'autorisation..."
+    echo "[HytaleDockerServer-Auth] Pending authorization..."
     while true; do
         token_req=$(curl -s -X POST "https://oauth.accounts.hytale.com/oauth2/token" \
           -d "client_id=hytale-server" \
@@ -49,7 +49,7 @@ authenticate_hytale() {
 
         if [ -n "$access_token" ]; then
             echo "$token_req" > "$OAUTH_STORAGE"
-            echo "[HytaleDockerServer-Auth] Autorisation réussie !"
+            echo "[HytaleDockerServer-Auth] Authorization successful !"
             break
         fi
 
@@ -60,7 +60,7 @@ authenticate_hytale() {
     profile_uuid=$(get_json_val "$profile_req" "uuid")
 }
 refresh_access_token() {
-    echo "[HytaleDockerServer-Auth] Rafraîchissement du token d'accès..."
+    echo "[HytaleDockerServer-Auth] Refreshing the access token..."
     old_refresh_token=$(get_json_val "$(cat "$OAUTH_STORAGE")" "refresh_token")
 
     refresh_req=$(curl -s -X POST "https://oauth.accounts.hytale.com/oauth2/token" \
@@ -81,7 +81,7 @@ create_game_session() {
     profile_uuid=$(echo "$profile_req" | sed -n 's/.*"uuid":"\([^"]*\)".*/\1/p' | head -n 1)
     selected_uuid="${OWNER_UUID:-$profile_uuid}"
 
-    echo "[HytaleDockerServer-Auth] Génération d'une nouvelle session de jeu..."
+    echo "[HytaleDockerServer-Auth] Generating a new game session..."
     session_req=$(curl -s -X POST "https://sessions.hytale.com/game-session/new" \
       -H "Authorization: Bearer $access_token" \
       -H "Content-Type: application/json" \
@@ -92,12 +92,12 @@ create_game_session() {
 
     # check if tokens are empty
     if [ -z "$session_token" ] || [ -z "$identity_token" ]; then
-        echo "[HytaleDockerServer-Auth] Échec de la création de la session de jeu."
+        echo "[HytaleDockerServer-Auth] Game session creation failed.."
         echo "$session_req"
         exit 1
     fi
 
-    echo "[HytaleDockerServer-Auth] Session créée avec succès :"
+    echo "[HytaleDockerServer-Auth] Session successfully created :"
     export HYTALE_SERVER_SESSION_TOKEN="${HYTALE_SERVER_SESSION_TOKEN:-$session_token}"
     export HYTALE_SERVER_IDENTITY_TOKEN="${HYTALE_SERVER_IDENTITY_TOKEN:-$identity_token}"
     export OWNER_UUID="$selected_uuid"
