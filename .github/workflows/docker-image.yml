@@ -1,6 +1,7 @@
 name: Publish Docker image
 
 on:
+
   release:
     types: [published]
 
@@ -45,7 +46,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: ${{ secrets.DOCKER_USERNAME }}/hytale-docker-server
           short-description: "Hytale Docker Server - High performance containerized Hytale server"
-          readme-filepath: ./README.md
+          readme-filepath: ./README.MD
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v3
