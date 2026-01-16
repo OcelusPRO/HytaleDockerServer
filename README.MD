@@ -1,4 +1,4 @@
-# Docker Server
+# Hytale Docker Server
 A high-performance, automated Docker image for running Hytale servers with Java 25. This project features automated updates, secure OAuth2 Device Flow authentication, and optimized memory management for low-latency gaming.
 
 ## Features
