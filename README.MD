@@ -14,6 +14,7 @@ A high-performance, automated Docker image for running Hytale servers with Java 
 - Persistent Session: Stores and refreshes access tokens in your volume to maintain server identity across restarts.
 - Alpine Optimized: Includes gcompat and automated machine-id generation to ensure native library compatibility (Netty/QUIC).
 - Security First: Runs as a non-root user (hytale) and uses gosu for proper signal handling.
+- Automatic update without intervention
 
 ## Quick Start
 
@@ -52,29 +53,39 @@ You can find various configuration templates in the [samples](./samples) directo
 
 #### Environment Variables
 
-| category            | Variable         | Description                                      | Default                                               |                                                  
-|---------------------|------------------|--------------------------------------------------|-------------------------------------------------------|
-| **JVM Settings**    | `XMX`            | Maximum Java heap size                           | `4096M`                                               |
-| **JVM Settings**    | `XMS`            | Initial Java heap size                           | `2048M`                                               |
-| **JVM Settings**    | `GC_TYPE`        | Type of garbage collector (g1gc, zgc, or custom) | `g1gc`                                                |
-| **JVM Settings**    | `GC_ARGS`        | Additional custom garbage collector arguments    | (empty)                                               |
-| **JVM Settings**    | `USE_AOT`        | Enable Hytale AOT (Ahead-of-Time) file usage     | `false`                                               |
-| **JVM Settings**    | `DTERM_JLINE`    | Enable JLine support in DTerm                    | `true`                                                |
-| **JVM Settings**    | `DTERM_ANSI`     | Enable ANSI colors in DTerm                      | `true`                                                |
-| **JVM Settings**    | `JVM_ARGS`       | **Overrides** all other JVM args if set          | (empty)                                               |
-| **Server Settings** | `SERVER_PORT`    | Hytale server listening port                     | `5520`                                                |
-| **Server Settings** | `SERVER_IP`      | Hytale server IP address                         | `0.0.0.0`                                             |
-| **Server Settings** | `ENABLE_SENTRY`  | Enable Sentry error reporting                    | `false`                                               |
-| **Server Settings** | `OWNER_UUID`     | Owner UUID for server authentication             | (empty)                                               |
-| **Server Settings** | `SERVER_ARGS`    | **Overrides** all other server args if set       | (empty)                                               |
-| **Others**          | `DOWNLOADER_URL` | Custom Hytale server downloader zip URL          | `https://downloader.hytale.com/hytale-downloader.zip` |
+| category            | Variable             | Description                                      | Default                                               |                                                  
+|---------------------|----------------------|--------------------------------------------------|-------------------------------------------------------|
+| **JVM Settings**    | `XMX`                | Maximum Java heap size                           | `4096M`                                               |
+| **JVM Settings**    | `XMS`                | Initial Java heap size                           | `2048M`                                               |
+| **JVM Settings**    | `GC_TYPE`            | Type of garbage collector (g1gc, zgc, or custom) | `g1gc`                                                |
+| **JVM Settings**    | `GC_ARGS`            | Additional custom garbage collector arguments    | (empty)                                               |
+| **JVM Settings**    | `USE_AOT`            | Enable Hytale AOT (Ahead-of-Time) file usage     | `false`                                               |
+| **JVM Settings**    | `DTERM_JLINE`        | Enable JLine support in DTerm                    | `true`                                                |
+| **JVM Settings**    | `DTERM_ANSI`         | Enable ANSI colors in DTerm                      | `true`                                                |
+| **JVM Settings**    | `JVM_ARGS`           | **Overrides** all other JVM args if set          | (empty)                                               |
+| **Server Settings** | `SERVER_PORT`        | Hytale server listening port                     | `5520`                                                |
+| **Server Settings** | `SERVER_IP`          | Hytale server IP address                         | `0.0.0.0`                                             |
+| **Server Settings** | `ENABLE_SENTRY`      | Enable Sentry error reporting                    | `false`                                               |
+| **Server Settings** | `OWNER_UUID`         | Owner UUID for server authentication             | (empty)                                               |
+| **Server Settings** | `SERVER_ARGS`        | **Overrides** all other server args if set       | (empty)                                               |
+| **Others**          | `DOWNLOADER_URL`     | Custom Hytale server downloader zip URL          | `https://downloader.hytale.com/hytale-downloader.zip` |
+| **Others**          | `ENABLE_AUTO_UPDATE` | enable auto-update                               | true                                                  |
+| **Others**          | `SERVER_PATH`        | container path for server                        | `/game`                                               |
+
 
 #### Volumes
 
-- `/game`: This is the main directory for server files, world data, and authentication tokens. This must be persistent to avoid re-authenticating on every restart.
+- `/game`: (can be changed with `SERVER_PATH` env var) This is the main directory for server files, world data, and authentication tokens. This must be persistent to avoid re-authenticating and save loss on every restart.
+
+## Auto-Update
+
+In addition to automatically using the latest available version when the container starts, the server will check for updates throughout its lifecycle.
+
+When an update is detected, the server will notify players a few minutes before restarting to install the latest version.
 
 ## Use Pterodactyl Panel
-> Work in progress !
+> Work in progress ! *(currently not tested, can't guarantee it will work)*
+ 
 Copy the [hytale-server-egg.json](./hytale-server-egg.json) file to your pterodactyl panel and add it to your server.
 
 ## Star History
