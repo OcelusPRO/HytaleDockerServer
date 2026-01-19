@@ -41,6 +41,8 @@ if [ "$USE_AOT_LOWER" = "true" ]; then
   aot_arg="-XX:AOTCache=HytaleServer.aot"
 fi
 
+export ENABLE_AUTO_UPDATE="${ENABLE_AUTO_UPDATE:-true}"
+
 jvm_args="-Xms$XMS -Xmx$XMX -Dterminal.jline=$DTERM_JLINE -Dterminal.ansi=$DTERM_ANSI $GC_ARGS $aot_arg"
 export JVM_ARGS="${JVM_ARGS:-$jvm_args}"
 

@@ -84,10 +84,39 @@ fi
 chown -R "hytale:hytale" "$SERVER_PATH" /etc/machine-id /app 2>/dev/null || true
 cd "$SERVER_PATH/Server" || exit
 
+
+rm pipe 2>/dev/null || true
+mkfifo pipe
+exec 3<>pipe
+
+start_auto_updater $downloader &
+UPDATER_PID=$!
+
+
 echo "[HytaleDockerServer-Boot] Hytale server starting"
 
 # shellcheck disable=SC2086
-exec gosu hytale \
-  java ${JVM_ARGS} \
+java ${JVM_ARGS} \
     -jar HytaleServer.jar \
-    ${SERVER_ARGS}
+    ${SERVER_ARGS} < pipe &
+SERVER_PID=$!
+
+trap 'echo "stop" > pipe' TERM INT
+
+
+while kill -0 "$SERVER_PID" 2>/dev/null; do
+  if read -r -t 1 line; then
+    if [ "$line" = "stop a" ]; then
+        send_stop_signal
+      else echo "$line" > pipe
+    fi
+  fi
+done
+
+echo ""
+echo "[HytaleDockerServer-Boot] Hytale server stopped."
+kill "$UPDATER_PID" 2>/dev/null || true
+rm pipe 2>/dev/null || true
+exec 3>&-
+kill $$ 2>/dev/null
+exit 0

@@ -1,14 +1,11 @@
 #!/bin/bash
 
-mk_cd()
-{
+mk_cd(){
   path="$1"
   mkdir -p "$path"
   cd "$path" || exit
 }
-
-download_server()
-{
+download_server(){
   path="$1" # /app/server
   downloader="$2"
   version="$3"
@@ -17,11 +14,9 @@ download_server()
   unzip -o "$version.zip" -d "$SERVER_PATH"
   echo "$version" > "$SERVER_PATH/version.txt"
 }
-
 get_json_val() {
     echo "$1" | sed -n "s/.*\"$2\":\"\([^\"]*\)\".*/\1/p"
 }
-
 authenticate_hytale() {
     echo "[HytaleDockerServer-Auth] Device Flow authentication initialization..."
     auth_req=$(curl -s -X POST "https://oauth.accounts.hytale.com/oauth2/device/auth" -d "client_id=hytale-server" -d "scope=openid offline auth:server")
@@ -101,4 +96,74 @@ create_game_session() {
     export HYTALE_SERVER_SESSION_TOKEN="${HYTALE_SERVER_SESSION_TOKEN:-$session_token}"
     export HYTALE_SERVER_IDENTITY_TOKEN="${HYTALE_SERVER_IDENTITY_TOKEN:-$identity_token}"
     export OWNER_UUID="$selected_uuid"
+}
+get_latest_version() {
+  downloader="$1"
+
+  if [ -f "$DOWNLOADER_CREDENTIALS" ]; then
+    cp "$DOWNLOADER_CREDENTIALS" "/app/$DOWNLOAD_CREDENTIALS_FILE_NAME"
+    cp "$DOWNLOADER_CREDENTIALS" "./$DOWNLOAD_CREDENTIALS_FILE_NAME"
+  fi
+  command="$downloader -print-version"
+  $command
+  cp "/app/$DOWNLOAD_CREDENTIALS_FILE_NAME" "$DOWNLOADER_CREDENTIALS"
+  latest="$($command)"
+
+  echo "$latest"
+}
+
+start_auto_updater() {
+  ENABLE_AUTO_UPDATE_LOWER=$(echo "$ENABLE_AUTO_UPDATE" | tr '[:upper:]' '[:lower:]')
+  if [ "$ENABLE_AUTO_UPDATE_LOWER" != "true" ]; then
+    echo "[HytaleDockerServer-Updater] Auto-updates are disabled."
+    return
+  fi
+
+  downloader="$1"
+  current="$(cat "$SERVER_PATH/version.txt")"
+
+  while true; do
+    sleep 3600
+    latest=$( get_latest_version "$downloader" )
+
+    if [ "$current" != "$latest" ]; then
+      echo "[HytaleDockerServer-Updater] New version detected: $latest (current: $current)."
+      send_stop_signal
+      return
+    fi
+  done
+}
+
+send_stop_signal() {
+  echo "[HytaleDockerServer-Updater] Sending reboot warning (5 minutes)..."
+  command='eventtitle --title="The server will restart in 5 minutes"  --secondary="Warning, Server Update" --major'
+  echo "$command" > pipe
+
+  sleep 180
+  echo "[HytaleDockerServer-Updater] Sending reboot warning (2 minutes)..."
+  command='eventtitle --title="The server will restart in 2 minutes"  --secondary="Warning, Server Update" --major'
+  echo "$command" > pipe
+
+  sleep 60
+  echo "[HytaleDockerServer-Updater] Sending reboot warning (1 minute)..."
+  command='eventtitle --title="The server will restart in 1 minute"  --secondary="Warning, Server Update" --major'
+  echo "$command" > pipe
+
+
+  sleep 30
+  echo "[HytaleDockerServer-Updater] Sending reboot warning (30 seconds)..."
+  command='eventtitle --title="The server will restart in 30 seconds"  --secondary="Warning, Server Update" --major'
+  echo "$command" > pipe
+
+  sleep 20
+  echo "[HytaleDockerServer-Updater] Sending reboot warning (10 seconds)..."
+  command='eventtitle --title="The server will restart in 10 seconds"  --secondary="Warning, Server Update" --major'
+  echo "$command" > pipe
+
+  sleep 10
+  echo "[HytaleDockerServer-Updater] Sending stop command to the server..."
+  command='eventtitle --title="Server is restarting now!"  --secondary="Warning, Server Update" --major'
+  echo "$command" > pipe
+  sleep 2
+  echo "stop" > pipe
 }
