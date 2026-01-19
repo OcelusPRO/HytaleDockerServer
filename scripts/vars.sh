@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 export DOWNLOADER_URL="${DOWNLOADER_URL:-https://downloader.hytale.com/hytale-downloader.zip}"
 export DOWNLOAD_CREDENTIALS_FILE_NAME=".hytale-downloader-credentials.json"
