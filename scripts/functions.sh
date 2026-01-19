@@ -97,6 +97,11 @@ create_game_session() {
     export HYTALE_SERVER_IDENTITY_TOKEN="${HYTALE_SERVER_IDENTITY_TOKEN:-$identity_token}"
     export OWNER_UUID="$selected_uuid"
 }
+change_machine_id() {
+  new_id=$(cat /dev/urandom | tr -dc 'a-f0-8' | fold -w 32 | head -n 1)
+  echo "$new_id" > /etc/machine-id
+}
+
 get_latest_version() {
   downloader="$1"
 

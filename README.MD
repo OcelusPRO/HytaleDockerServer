@@ -5,7 +5,7 @@ A high-performance, automated Docker image for running Hytale servers with Java 
 [![Docker Hub Pulls](https://img.shields.io/docker/pulls/ocelus/hytale-docker-server?logo=docker)](https://hub.docker.com/r/ocelus/hytale-docker-server)
 [![Docker Image Size](https://img.shields.io/docker/image-size/ocelus/hytale-docker-server/latest?logo=docker)](https://hub.docker.com/r/ocelus/hytale-docker-server)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/oceluspro/hytaledockerserver/docker-image.yml?label=build&logo=github)](https://github.com/oceluspro/hytaledockerserver/actions)
-[![GitHub stars](https://img.shields.io/github/stars/oceluspro/hytaledockerserver?style=flat&logo=github)](https://github.com/oceluspro/hytaledockerserver/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/oceluspro/hytaledockerserver?style=flat&logo=github)](https://github.com/oceluspro/hytaledockerserver)
 ## Features
 
 - Java 25 Runtime: Leverages the latest JVM features, including Generational ZGC and optimized native access for high performance.
@@ -72,6 +72,10 @@ You can find various configuration templates in the [samples](./samples) directo
 #### Volumes
 
 - `/game`: This is the main directory for server files, world data, and authentication tokens. This must be persistent to avoid re-authenticating on every restart.
+
+## Use Pterodactyl Panel
+> Work in progress !
+Copy the [hytale-server-egg.json](./hytale-server-egg.json) file to your pterodactyl panel and add it to your server.
 
 ## Star History
 

@@ -1,0 +1,135 @@
+{
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": "https://raw.githubusercontent.com/OcelusPRO/HytaleDockerServer/refs/heads/master/hytale-server-egg.json"
+    },
+    "exported_at": "2026-01-16T20:00:00+00:00",
+    "name": "HytaleDockerServer",
+    "author": "32218885+OcelusPRO@users.noreply.github.com",
+    "description": "High-performance, automated Hytale server running on Java 25. Features OAuth2 Device Flow authentication, automated updates, and ZGC support.",
+    "features": [],
+    "docker_images": {
+        "harbor.ftnl.link/yarp/hytale-server:experimental": "hytale-docker-server"
+    },
+    "file_denylist": [],
+    "startup": "",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"Hytale server starting\"\r\n}",
+        "logs": "{}",
+        "stop": "stop"
+    },
+    "scripts": {},
+    "variables": [
+        {
+            "name": "Volume path",
+            "field_type": "text",
+            "description": "Persistent volume path for server files and authentication tokens.",
+            "env_variable": "SERVER_PATH",
+            "default_value": "/home/container",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "string|required"
+        },
+        {
+            "name": "Max Memory (XMX)",
+            "field_type": "text",
+            "description": "Maximum Java heap size (e.g., 4096M).",
+            "env_variable": "XMX",
+            "default_value": "4096M",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string"
+        },
+        {
+            "name": "Initial Memory (XMS)",
+            "field_type": "text",
+            "description": "Initial Java heap size (e.g., 2048M).",
+            "env_variable": "XMS",
+            "default_value": "2048M",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string"
+        },
+        {
+            "name": "Garbage Collector Type",
+            "field_type": "text",
+            "description": "GC Type: 'g1gc' or 'zgc'.",
+            "env_variable": "GC_TYPE",
+            "default_value": "g1gc",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string"
+        },
+        {
+            "name": "Additional GC Arguments",
+            "field_type": "text",
+            "description": "Custom arguments for the Garbage Collector.",
+            "env_variable": "GC_ARGS",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string"
+        },
+        {
+            "name": "Use AOT",
+            "field_type": "boolean",
+            "description": "Enable usage of the Hytale AOT (Ahead-of-Time) file (true/false).",
+            "env_variable": "USE_AOT",
+            "default_value": false,
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|in:true,false"
+        },
+        {
+            "name": "Enable Sentry",
+            "field_type": "boolean",
+            "description": "Enable Sentry error reporting (true/false).",
+            "env_variable": "ENABLE_SENTRY",
+            "default_value": true,
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|in:true,false"
+        },
+        {
+            "name": "Owner UUID",
+            "field_type": "text",
+            "description": "Owner UUID for server authentication.",
+            "env_variable": "OWNER_UUID",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string"
+        },
+        {
+            "name": "JVM Arguments (Override)",
+            "field_type": "text",
+            "description": "Overrides all other JVM arguments if set. Use with caution.",
+            "env_variable": "JVM_ARGS",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string"
+        },
+        {
+            "name": "Server Arguments (Override)",
+            "field_type": "text",
+            "description": "Overrides all other server arguments if set.",
+            "env_variable": "SERVER_ARGS",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string"
+        },
+        {
+            "name": "Downloader URL",
+            "field_type": "text",
+            "description": "Custom URL for the Hytale server downloader zip.",
+            "env_variable": "DOWNLOADER_URL",
+            "default_value": "https://downloader.hytale.com/hytale-downloader.zip",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string"
+        }
+    ]
+}

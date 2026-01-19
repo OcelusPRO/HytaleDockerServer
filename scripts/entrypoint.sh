@@ -1,12 +1,13 @@
 #!/bin/bash
 set -eu
+cd /app || exit
 
 # Load scripts
 . /app/scripts/vars.sh
 . /app/scripts/functions.sh
 
-
-chown -R "hytale:hytale" "$SERVER_PATH" /app 2>/dev/null || true
+user=${USER:-container}
+chown -R "$user:$user" "$SERVER_PATH" /app 2>/dev/null || true
 echo "[HytaleDockerServer-Boot] Writing test in $SERVER_PATH..."
 
 if ! touch "$SERVER_PATH/.write_test" >/dev/null 2>&1; then
@@ -75,13 +76,13 @@ fi
 echo "[HytaleDockerServer-Boot] Creating the game session"
 create_game_session
 
-mkdir -p /etc
-if [ ! -f "/etc/machine-id" ]; then
-  new_id=$(cat /dev/urandom | tr -dc 'a-f0-8' | fold -w 32 | head -n 1)
-  echo "$new_id" > /etc/machine-id
+machine_id_content=$(cat /etc/machine-id)
+placeholder_value="PLACEHOLDER"
+if [ "$machine_id_content" = "$placeholder_value" ]; then
+    change_machine_id
 fi
 
-chown -R "hytale:hytale" "$SERVER_PATH" /etc/machine-id /app 2>/dev/null || true
+chown -R "$user:$user" "$SERVER_PATH" /etc/machine-id /app 2>/dev/null || true
 cd "$SERVER_PATH/Server" || exit
 
 

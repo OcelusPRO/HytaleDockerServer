@@ -1,6 +1,7 @@
 # Git files
 .git
 .gitignore
+/.github
 
 #idea
 .idea
@@ -10,3 +11,6 @@ Dockerfile
 .dockerignore
 
 tests
+samples
+hytale-server-egg.json
+README.MD

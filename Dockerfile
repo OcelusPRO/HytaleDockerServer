@@ -34,12 +34,17 @@ LABEL io.github.hytaledockerserver.env.SERVER_ARGS="Override all other server ar
 LABEL io.github.hytaledockerserver.env.DOWNLOADER_URL="Custom Hytale server downloader URL (default https://downloader.hytale.com/hytale-downloader.zip)"
 
 
-RUN apk add --no-cache gosu curl unzip gcompat libgcc
-RUN addgroup -g 1000 hytale && \
-    adduser -u 1000 -G hytale -S -D hytale
-
-WORKDIR /app
 COPY --chmod=755 scripts/ /app/scripts/
+
+RUN apk add --no-cache curl unzip gcompat libgcc
+RUN addgroup -g 1000 container && adduser -u 1000 -G container -S -D container
+RUN chown -R container:container /home/container /app
+RUN mkdir -p /etc && echo "PLACEHOLDER" > /etc/machine-id && chmod a+rw /etc/machine-id
+
+USER container
+ENV  USER=container HOME=/home/container
+
+WORKDIR /home/container
 
 EXPOSE 5520/udp
 
