@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# TODO
 start_auto_updater() {
   ENABLE_AUTO_UPDATE_LOWER=$(echo "$ENABLE_AUTO_UPDATE" | tr '[:upper:]' '[:lower:]')
   if [ "$ENABLE_AUTO_UPDATE_LOWER" != "true" ]; then
@@ -8,12 +7,11 @@ start_auto_updater() {
     return
   fi
 
-  downloader="$1"
-  current="$(cat "$SERVER_PATH/version.txt")"
+  current="$(get_installed_version)"
 
   while true; do
     sleep 3600
-    latest=$( get_latest_version "$downloader" )
+    latest=$(get_latest_version)
 
     if [ "$current" != "$latest" ]; then
       send_log "AUTO-UPDATER" "New version detected: $latest (current: $current)." "ERROR"
