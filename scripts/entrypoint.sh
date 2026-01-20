@@ -1,8 +1,10 @@
 #!/bin/bash
 set -eu
 
-. /app/scripts/vars.sh
 . /app/scripts/functions.sh
+load_args_into_env "$@"
+
+. /app/scripts/vars.sh
 
 test_perm "$SERVER_PATH"
 test_perm "/app"
