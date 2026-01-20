@@ -9,10 +9,10 @@ configure_downloader_credentials(){
 
 get_downloader() {
   send_log "SETUP" "Downloading the hytale-downloader from $DOWNLOADER_URL..." "INFO"
-  curl --output /app/hytale-downloader.zip "$DOWNLOADER_URL"
+  curl --output /app/hytale-downloader.zip "$DOWNLOADER_URL" >&2
 
   send_log "SETUP" "Extracting the hytale-downloader..." "INFO"
-  unzip /app/hytale-downloader.zip -d /app/hytale-downloader-files
+  unzip /app/hytale-downloader.zip -d /app/hytale-downloader-files >&2
 
   send_log "SETUP" "Cleaning up the hytale-downloader zip file..." "INFO"
   rm /app/hytale-downloader.zip
@@ -27,7 +27,6 @@ get_downloader() {
   configure_downloader_credentials
 
   send_log "SETUP" "hytale-downloader is ready to use." "INFO"
-  ls -la >&2
   echo "/app/hytale-downloader"
 }
 
@@ -45,9 +44,8 @@ run_void_downloader_command() {
   local downloader=""
   downloader=$(find_downloader)
 
-  local command=""
-  command=$("$downloader" -print-version)
-  $command > /dev/null 2>&1
+  "$downloader" -print-version > /dev/null 2>&1
+
   cp "/app/$DOWNLOAD_CREDENTIALS_FILE_NAME" "$DOWNLOADER_CREDENTIALS"
 }
 
@@ -58,9 +56,7 @@ get_latest_version() {
   run_void_downloader_command
 
   local latest=""
-  local command=""
-  command=$("$downloader" -print-version)
-  latest=$($command)
+  latest=$("$downloader" -print-version)
   echo "$latest"
 }
 
@@ -71,6 +67,7 @@ get_version_file(){
   else
     send_log "DOWNLOADER" "No version file found at $version_file. Creating one with 'unknown' version." "WARN"
     echo "unknown" > "$version_file"
+    echo "$version_file"
   fi
 }
 
@@ -105,10 +102,10 @@ download_server(){
   mkdir -p "$temp_data_folder"
 
   send_log "DOWNLOADER" "Downloading Hytale server version $latest..." "INFO"
-  downloader -download-path $temp_data_folder
+  "$downloader" -download-path "$temp_data_folder"
 
   send_log "DOWNLOADER" "Extracting Hytale server version $latest to $SERVER_PATH..." "INFO"
-  unzip -o "$temp_data_folder/$latest.zip" -d "$SERVER_PATH"
+  unzip -o "$temp_data_folder/$latest.zip" -d "$SERVER_PATH" >&2
 
   send_log "DOWNLOADER" "Cleaning up temporary files..." "INFO"
   rm -rf "$temp_data_folder"
