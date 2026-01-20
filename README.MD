@@ -13,7 +13,7 @@ A high-performance, automated Docker image for running Hytale servers with Java 
 - Automated Updates: Automatically checks for and downloads the latest Hytale server version on startup using the official downloader.
 - Persistent Session: Stores and refreshes access tokens in your volume to maintain server identity across restarts.
 - Alpine Optimized: Includes gcompat and automated machine-id generation to ensure native library compatibility (Netty/QUIC).
-- Security First: Runs as a non-root user (hytale) and uses gosu for proper signal handling.
+- Security First: Runs as a non-root user (container).
 - Automatic update without intervention
 
 ## Quick Start
@@ -32,7 +32,6 @@ services:
       - "5520:5520/udp"
     environment:
       - XMX=16G
-      - GC_TYPE=zgc
     volumes:
       - ./hytale-data:/game
     restart: unless-stopped
@@ -65,11 +64,11 @@ You can find various configuration templates in the [samples](./samples) directo
 | **JVM Settings**    | `JVM_ARGS`           | **Overrides** all other JVM args if set          | (empty)                                               |
 | **Server Settings** | `SERVER_PORT`        | Hytale server listening port                     | `5520`                                                |
 | **Server Settings** | `SERVER_IP`          | Hytale server IP address                         | `0.0.0.0`                                             |
-| **Server Settings** | `ENABLE_SENTRY`      | Enable Sentry error reporting                    | `false`                                               |
+| **Server Settings** | `ENABLE_SENTRY`      | Enable Sentry error reporting                    | `true`                                                |
 | **Server Settings** | `OWNER_UUID`         | Owner UUID for server authentication             | (empty)                                               |
 | **Server Settings** | `SERVER_ARGS`        | **Overrides** all other server args if set       | (empty)                                               |
 | **Others**          | `DOWNLOADER_URL`     | Custom Hytale server downloader zip URL          | `https://downloader.hytale.com/hytale-downloader.zip` |
-| **Others**          | `ENABLE_AUTO_UPDATE` | enable auto-update                               | true                                                  |
+| **Others**          | `ENABLE_AUTO_UPDATE` | enable auto-update                               | `true`                                                |
 | **Others**          | `SERVER_PATH`        | container path for server                        | `/game`                                               |
 
 
