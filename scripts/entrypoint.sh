@@ -35,6 +35,8 @@ fi
 send_log "ENTRYPOINT" "Creating the game session" "INFO"
 create_game_session
 
+send_log "ENTRYPOINT" "Applying server configurations..." "INFO"
+configure_game_files
 
 cd "$SERVER_PATH/Server" || exit
 

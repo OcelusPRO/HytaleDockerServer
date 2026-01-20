@@ -35,8 +35,9 @@ LABEL io.github.hytaledockerserver.env.DOWNLOADER_URL="Custom Hytale server down
 
 
 COPY --chmod=755 scripts/ /app/scripts/
+COPY --chmod=644 defaults/ /app/defaults/
 
-RUN apk add --no-cache curl unzip gcompat libgcc bash
+RUN apk add --no-cache curl unzip gcompat libgcc bash jq
 RUN addgroup -g 1000 container && adduser -u 1000 -G container -S -D container
 RUN chown -R container:container /home/container /app
 RUN mkdir -p /etc && echo "PLACEHOLDER" > /etc/machine-id && chown "container:container" /etc/machine-id
