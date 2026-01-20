@@ -11,6 +11,9 @@ send_log(){
   local C_CYAN='\033[0;36m'
   local C_RED='\033[0;31m'
 
+  local C_BOLD='\033[1m'
+  local C_NOBOLD='\033[22m'
+
   local level_color=""
   case "$log_level" in
       "INFO")  level_color="$C_CYAN" ;;
@@ -22,7 +25,7 @@ send_log(){
   local timestamp=""
   timestamp=$(date "+%Y/%m/%d %H:%M:%S")
   printf -v formated \
-    "[HytaleDockerServer] ${C_YELLOW}[%-19s${level_color}%10s${C_YELLOW}]%15s${C_RESET} ${level_color}%s${C_RESET}" \
+    "${C_BOLD}[HytaleDockerServer]${C_NOBOLD} ${C_YELLOW}[%-19s${level_color}${C_BOLD}%10s${C_NOBOLD}${C_YELLOW}]%15s${C_RESET} ${level_color}%s${C_RESET}" \
       "$timestamp" \
       "$log_level" \
       "[$type]" \
