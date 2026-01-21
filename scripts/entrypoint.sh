@@ -19,8 +19,8 @@ check_auth
 send_log "ENTRYPOINT" "Checking the Hytale server version..." "INFO"
 status=$( check_for_update )
 if [ "$status" = "update_available" ]; then
-    send_log "ENTRYPOINT" "Update available. Downloading the latest version." "INFO"
-    download_server
+  send_log "ENTRYPOINT" "Update available. Downloading the latest version." "INFO"
+  download_server
 fi
 
 send_log "ENTRYPOINT" "Checking machine-id" "INFO"

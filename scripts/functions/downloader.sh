@@ -44,7 +44,7 @@ run_void_downloader_command() {
   local downloader=""
   downloader=$(find_downloader)
 
-  "$downloader" -print-version > /dev/null 2>&1
+  "$downloader" -print-version >&2
 
   cp "/app/$DOWNLOAD_CREDENTIALS_FILE_NAME" "$DOWNLOADER_CREDENTIALS"
 }
@@ -84,11 +84,9 @@ check_for_update() {
   if [ "$current" != "$latest" ]; then
     send_log "DOWNLOADER" "Update available: current version is $current, latest version is $latest." "WARN"
     echo "update_available"
-    return 1
   else
     send_log "DOWNLOADER" "No update needed: current version $current is up to date." "INFO"
     echo "up_to_date"
-    return 0
   fi
 }
 
@@ -102,7 +100,7 @@ download_server(){
   mkdir -p "$temp_data_folder"
 
   send_log "DOWNLOADER" "Downloading Hytale server version $latest..." "INFO"
-  "$downloader" -download-path "$temp_data_folder"
+  "$downloader" -download-path "$temp_data_folder/$latest.zip"
 
   send_log "DOWNLOADER" "Extracting Hytale server version $latest to $SERVER_PATH..." "INFO"
   unzip -o "$temp_data_folder/$latest.zip" -d "$SERVER_PATH" >&2
