@@ -46,7 +46,7 @@ run_void_downloader_command() {
 
   "$downloader" -print-version >&2
 
-  cp "/app/$DOWNLOAD_CREDENTIALS_FILE_NAME" "$DOWNLOADER_CREDENTIALS"
+  cp "/app/$DOWNLOAD_CREDENTIALS_FILE_NAME" "$DOWNLOADER_CREDENTIALS" || send_log "DOWNLOADER" "Failed to persist downloader credentials. Re-authentication may be required on next start." "WARN"
 }
 
 get_latest_version() {
