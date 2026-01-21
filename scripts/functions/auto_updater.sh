@@ -50,7 +50,7 @@ match_cron_field() {
     fi
   done
 
-  # Aucun pattern n'a matché
+  # No pattern matched
   return 1
 }
 
