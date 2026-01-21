@@ -128,7 +128,12 @@ In addition to automatically using the latest available version when the contain
 
 When an update is detected, the server will notify players a few minutes before restarting to install the latest version.
 
-<img src="./screens/update_5min.webp" width="45%"></img> <img src="./screens/update_2min.webp" width="45%"></img> <img src="./screens/update_1min.webp" width="45%"></img> <img src="./screens/update_30sec.webp" width="45%"></img> <img src="./screens/update_10sec.webp" width="45%"></img> <img src="./screens/update_now.webp" width="45%"></img> 
+<img src="https://github.com/OcelusPRO/HytaleDockerServer/blob/master/screens/update_5min.webp?raw=true" width="45%"></img> 
+<img src="https://github.com/OcelusPRO/HytaleDockerServer/blob/master/screens/update_2min.webp?raw=true" width="45%"></img> 
+<img src="https://github.com/OcelusPRO/HytaleDockerServer/blob/master/screens/update_1min.webp?raw=true" width="45%"></img> 
+<img src="https://github.com/OcelusPRO/HytaleDockerServer/blob/master/screens/update_30sec.webp?raw=true" width="45%"></img> 
+<img src="https://github.com/OcelusPRO/HytaleDockerServer/blob/master/screens/update_10sec.webp?raw=true" width="45%"></img> 
+<img src="https://github.com/OcelusPRO/HytaleDockerServer/blob/master/screens/update_now.webp?raw=true" width="45%"></img> 
 
 ## Pterodactyl Panel
 
