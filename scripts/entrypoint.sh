@@ -1,123 +1,88 @@
 #!/bin/bash
 set -eu
+
+. /app/scripts/functions.sh
+load_args_into_env "$@"
+
+. /app/scripts/vars.sh
+
+test_perm "$SERVER_PATH"
+test_perm "/app"
+
 cd /app || exit
 
-# Load scripts
-. /app/scripts/vars.sh
-. /app/scripts/functions.sh
 
-user=${USER:-container}
-chown -R "$user:$user" "$SERVER_PATH" /app 2>/dev/null || true
-echo "[HytaleDockerServer-Boot] Writing test in $SERVER_PATH..."
+send_log "ENTRYPOINT" "Checking hytale auth status" "INFO"
+check_auth
 
-if ! touch "$SERVER_PATH/.write_test" >/dev/null 2>&1; then
-    echo "-----------------------------------------------------------"
-    echo "ERROR: Unable to write in $SERVER_PATH"
-    echo "Check the permissions of your volume on the host."
-    echo "-----------------------------------------------------------"
-    exit 1
-else
-    echo "[HytaleDockerServer-Boot] Successful write to $SERVER_PATH, test cleanup..."
-    rm "$SERVER_PATH/.write_test"
+
+send_log "ENTRYPOINT" "Checking the Hytale server version..." "INFO"
+status=$( check_for_update )
+if [ "$status" = "update_available" ]; then
+  send_log "ENTRYPOINT" "Update available. Downloading the latest version." "INFO"
+  download_server
 fi
 
-echo "[HytaleDockerServer-Boot] Downloading the hytale-downloader from $DOWNLOADER_URL..."
-curl --output /app/hytale-downloader.zip "$DOWNLOADER_URL"
-
-echo "[HytaleDockerServer-Boot] Extracting the hytale-downloader..."
-unzip /app/hytale-downloader.zip -d /app/hytale-downloader-files
-
-echo "[HytaleDockerServer-Boot] Cleaning up the hytale-downloader zip file..."
-rm /app/hytale-downloader.zip
-
-echo "[HytaleDockerServer-Boot] Copying the Linux binary to /app/hytale-downloader and assigning execute permissions..."
-cp /app/hytale-downloader-files/hytale-downloader-linux-amd64 /app/hytale-downloader
-chmod +x /app/hytale-downloader
-
-echo "[HytaleDockerServer-Boot] Cleaning up temporary files from hytale-downloader..."
-rm -rf /app/hytale-downloader-files
-
-downloader="/app/hytale-downloader"
-
-if [ ! -f "$OAUTH_STORAGE" ]; then
-    authenticate_hytale
-else
-    if ! refresh_access_token; then
-        echo "[HytaleDockerServer-Auth] Refresh token expired. Reconnection required."
-        authenticate_hytale
-    fi
-fi
-
-if [ -f "$DOWNLOADER_CREDENTIALS" ]; then
-  cp "$DOWNLOADER_CREDENTIALS" "/app/$DOWNLOAD_CREDENTIALS_FILE_NAME"
-fi
-
-
-echo "[HytaleDockerServer-Boot] Checking the Hytale server version..."
-command="$downloader -print-version"
-$command
-cp "/app/$DOWNLOAD_CREDENTIALS_FILE_NAME" "$DOWNLOADER_CREDENTIALS"
-
-latest="$($command)"
-echo "[HytaleDockerServer-Boot] Latest version of the Hytale server available : $latest"
-
-if [ ! -f "$SERVER_PATH/version.txt" ]; then
-  echo "No installed version found. Downloading version $latest"
-  download_server "/app/server" "$downloader" "$latest"
-else
-  echo "Checking the installed version..."
-  current="$(cat "$SERVER_PATH/version.txt")"
-  if [ "$current" != "$latest" ]; then
-    echo "The installed version ($current) is different from the latest version ($latest). Downloading the new version."
-    download_server "/app/server" "$downloader" "$latest"
-  fi
-fi
-
-echo "[HytaleDockerServer-Boot] Creating the game session"
-create_game_session
-
+send_log "ENTRYPOINT" "Checking machine-id" "INFO"
 machine_id_content=$(cat /etc/machine-id)
 placeholder_value="PLACEHOLDER"
 if [ "$machine_id_content" = "$placeholder_value" ]; then
-    change_machine_id
+  send_log "ENTRYPOINT" "Machine-id is a placeholder. Generating a new one." "INFO"
+  change_machine_id
 fi
 
-chown -R "$user:$user" "$SERVER_PATH" /etc/machine-id /app 2>/dev/null || true
+
+send_log "ENTRYPOINT" "Creating the game session" "INFO"
+create_game_session
+
+send_log "ENTRYPOINT" "Applying server configurations..." "INFO"
+configure_game_files
+
 cd "$SERVER_PATH/Server" || exit
 
+rm COMMAND_PIPE 2>/dev/null || true
+mkfifo COMMAND_PIPE
+exec 3<>COMMAND_PIPE
 
-rm pipe 2>/dev/null || true
-mkfifo pipe
-exec 3<>pipe
+rm OUTPUT_PIPE 2>/dev/null || true
+mkfifo OUTPUT_PIPE
+exec 4<>OUTPUT_PIPE
+mkdir -p /app/logs
+touch /app/logs/full_session.log
+echo "" > /app/logs/full_session.log
+cat < OUTPUT_PIPE | tee -a /app/logs/full_session.log &
 
-start_auto_updater $downloader &
+
+start_auto_updater &
 UPDATER_PID=$!
 
 
-echo "[HytaleDockerServer-Boot] Hytale server starting"
+send_log "ENTRYPOINT" "Hytale server starting" "INFO"
 
 # shellcheck disable=SC2086
 java ${JVM_ARGS} \
     -jar HytaleServer.jar \
-    ${SERVER_ARGS} < pipe &
+    ${SERVER_ARGS} < COMMAND_PIPE > OUTPUT_PIPE &
 SERVER_PID=$!
 
-trap 'echo "stop" > pipe' TERM INT
+trap 'echo "stop" > COMMAND_PIPE' TERM INT
 
 
 while kill -0 "$SERVER_PID" 2>/dev/null; do
   if read -r -t 1 line; then
-    if [ "$line" = "stop a" ]; then
-        send_stop_signal
-      else echo "$line" > pipe
-    fi
+    find_command "$line"
   fi
 done
 
-echo ""
-echo "[HytaleDockerServer-Boot] Hytale server stopped."
+echo "" >&2
+send_log "ENTRYPOINT" "Hytale server stopped." "INFO"
 kill "$UPDATER_PID" 2>/dev/null || true
-rm pipe 2>/dev/null || true
+
+rm COMMAND_PIPE 2>/dev/null || true
+rm OUTPUT_PIPE 2>/dev/null || true
+
 exec 3>&-
+exec 4>&-
+
 kill $$ 2>/dev/null
 exit 0
