@@ -31,3 +31,4 @@ fi
 
 jvm_args_default="-Xms$XMS -Xmx$XMX -Dterminal.jline=$DTERM_JLINE -Dterminal.ansi=$DTERM_ANSI $GC_ARGS $aot_arg"
 JVM_ARGS=$(get_from_env "JVM_ARGS" "string" "$jvm_args_default" "trim")
+export JVM_ARGS

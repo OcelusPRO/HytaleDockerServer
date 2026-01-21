@@ -1,8 +1,5 @@
 #!/bin/bash
 
-PERMS_PATH="$SERVER_PATH/Server/permissions.json"
-WHITELIST_PATH="$SERVER_PATH/Server/whitelist.json"
-CONFIG_PATH="$SERVER_PATH/Server/config.json"
 
 init_json_files() {
   mkdir -p "$(dirname "$PERMS_PATH")"

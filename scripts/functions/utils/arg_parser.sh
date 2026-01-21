@@ -118,12 +118,15 @@ parse_format(){
 
 
 get_from_env() {
-  local var_name="$1"
-  local var_type="$2"
-  local default_value="$3"
-  local rules="$4"
+  local var_name="${1:-}"
+  local var_type="${2:-}"
+  local default_value="${3:-}"
+  local rules="${4:-}"
 
-  local value="${!var_name}"
+  if [ -z "$var_name" ]; then
+    return 1
+  fi
+  local value="${!var_name:-}"
 
   if [ -z "$value" ]; then
     if [ -n "$default_value" ]; then

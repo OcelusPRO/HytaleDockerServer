@@ -7,6 +7,7 @@ SERVER_IP=$(get_from_env "SERVER_IP" "string" "0.0.0.0")
 
 UUID_REGEX="^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
 OWNER_UUID=$(get_from_env "OWNER_UUID" "format($UUID_REGEX)" "" "trim")
+export OWNER_UUID
 
 
 ENABLE_SENTRY=$(get_from_env "ENABLE_SENTRY" "boolean" "true" "trim")
@@ -22,3 +23,4 @@ fi
 
 server_args_default="--assets $SERVER_PATH/Assets.zip --bind $SERVER_IP:$SERVER_PORT $SENTRY_ARG $OWNER_UUID_ARG"
 SERVER_ARGS=$(get_from_env "SERVER_ARGS" "string" "$server_args_default" "trim")
+export SERVER_ARGS
