@@ -1,7 +1,7 @@
 #!/bin/bash
 
 OPS_LIST=$(get_from_env "OPS_LIST" "string" "" "trim")
-OPS_MODE=$(get_from_env "OPS_MODE" "enum(add, override)" "override" "lower")
+OPS_MODE=$(get_from_env "OPS_MODE" "enum(add, override)" "add" "lower")
 export OPS_LIST
 export OPS_MODE
 
@@ -9,7 +9,7 @@ WHITELIST_ENABLED=$(get_from_env "WHITELIST_ENABLED" "boolean" "false")
 export WHITELIST_ENABLED
 
 WHITELIST_LIST=$(get_from_env "WHITELIST_LIST" "string" "" "trim")
-WHITELIST_MODE=$(get_from_env "WHITELIST_MODE" "enum(add, override)" "override" "lower")
+WHITELIST_MODE=$(get_from_env "WHITELIST_MODE" "enum(add, override)" "add" "lower")
 export WHITELIST_LIST
 export WHITELIST_MODE
 

@@ -24,6 +24,6 @@ export DOWNLOADER_CREDENTIALS
 
 ENABLE_AUTO_UPDATE=$(get_from_env "ENABLE_AUTO_UPDATE" "boolean" "true" "trim")
 CRON_REGEX="^([^ ]+ +){4}[^ ]+$"
-AUTO_UPDATE_CRON=$(get_from_env "AUTO_UPDATE_CRON" "format($CRON_REGEX)" "0 * * * *" "trim")
+AUTO_UPDATE_CRON=$(get_from_env "AUTO_UPDATE_CRON" "format($CRON_REGEX)" "*/30 * * * *" "trim")
 export ENABLE_AUTO_UPDATE
 export AUTO_UPDATE_CRON
