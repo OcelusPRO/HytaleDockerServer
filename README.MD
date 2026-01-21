@@ -106,7 +106,7 @@ You can customize your server using the following environment variables.
 | `DTERM_JLINE`          | Enable JLine support for the interactive terminal (`true`/`false`).                        | `true` if tty is allocated                            |
 | `DTERM_ANSI`           | Enable ANSI color support in the terminal (`true`/`false`).                                | `true`                                                |
 
-#### Persistant Volumes
+#### Persistent Volumes
 
 - `/game`: (can be changed with `SERVER_PATH` env var) This is the main directory for server files, world data, and authentication tokens. This must be persistent to avoid re-authenticating and save loss on every restart.
 
