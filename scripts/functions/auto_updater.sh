@@ -94,7 +94,6 @@ start_auto_updater() {
         send_log "AUTO-UPDATER" "New version detected: $latest (current: $current)." "WARN"
         send_log "AUTO-UPDATER" "Triggering update alert sequence." "WARN"
         find_command "auto_update_alert"
-        sleep 600
       else
         send_log "AUTO-UPDATER" "System is up to date ($current)." "INFO"
       fi
