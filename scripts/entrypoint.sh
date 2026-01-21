@@ -75,7 +75,7 @@ while kill -0 "$SERVER_PID" 2>/dev/null; do
 done
 
 echo "" >&2
-send_log "ENTRYPOINT" "Hytale server stopped."
+send_log "ENTRYPOINT" "Hytale server stopped." "INFO"
 kill "$UPDATER_PID" 2>/dev/null || true
 
 rm COMMAND_PIPE 2>/dev/null || true
